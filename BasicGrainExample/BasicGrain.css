@@ -1,0 +1,6 @@
+.grainBlock{
+    height: 600px;
+    width: 100%;
+    background-image:linear-gradient(90deg, black,white);
+    filter: url("#GrainFilter");
+}

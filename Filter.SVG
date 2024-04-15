@@ -1,0 +1,141 @@
+<svg class="MW-24-grainEffect">
+  
+  <filter id="grainy" x="0" y="0" width="100%" height="100%"> 
+    
+<!--  PrimaryChannel  -->
+    
+    <feTurbulence 
+      type='fractalNoise' 
+      baseFrequency='0.8' 
+      numOctaves='1'
+      seed="3"
+      result="baseGrain-Primary"
+      ></feTurbulence>
+    
+    <feBlend
+      in="baseGrain-Primary"
+      in2="SourceGraphic"
+      mode="color-dodge"
+      result="blendedGrain-Primary"
+    ></feBlend>
+    
+      <feComponentTransfer id="grainLinear-Primary" result="grainLinear-Primary">
+        <feFuncR type="linear" slope="0.68" intercept="-0.2"></feFuncR>
+        <feFuncG type="linear" slope="0.68" intercept="-0.2"></feFuncG>
+        <feFuncB type="linear" slope="0.68" intercept="-0.2"></feFuncB>
+      </feComponentTransfer>
+    
+       <feComponentTransfer id="grainGamma-Primary" result="grainGamma-Primary">
+        <feFuncR  type="gamma" amplitude="1" exponent="1" offset="0.1"></feFuncR>
+        <feFuncG type="gamma" amplitude="1" exponent="1" offset="0.1"></feFuncG>
+        <feFuncB type="gamma" amplitude="1" exponent="1" offset="0.1"></feFuncB>
+       </feComponentTransfer>
+    
+      <feComponentTransfer id="colorize-Primary" result="colorize-Primary">
+        <feFuncR  type="discrete" tableValues="0 0.89"></feFuncr>
+        <feFuncG type="discrete" tableValues="0 0.12"></feFuncG>
+        <feFuncB type="discrete" tableValues="0 0.15"></feFuncB>
+      </feComponentTransfer>
+       
+      <feMerge result="grainOut-Primary">
+        <feMergeNode in="blendedGrain-Primary"> </feMergeNode>
+        <feMergeNode in="grainLinear-Primary"> </feMergeNode>
+        <feMergeNode in="grainGamma-Primary"> </feMergeNode>
+        <feMergeNode in="colorize-Primary"> </feMergeNode>
+      </feMerge>
+    
+    <!--  SecondaryChannel  -->
+    
+    <feTurbulence 
+      type='fractalNoise' 
+      baseFrequency='0.8' 
+      numOctaves='1'
+      seed="3"
+      result="baseGrain-Secondary"
+      ></feTurbulence>
+    
+    <feBlend
+      in="baseGrain-Secondary"
+      in2="SourceGraphic"
+      mode="color-dodge"
+      result="blendedGrain-Secondary"
+     ></feBlend>
+    
+      <feComponentTransfer id="grainLinear-Secondary" result="grainLinear-Secondary">
+        <feFuncR  type="linear" slope="0.81" intercept="-0.2"></feFuncR>
+        <feFuncG type="linear" slope="0.81" intercept="-0.2"></feFuncG>
+        <feFuncB type="linear" slope="0.81" intercept="-0.2"></feFuncB>
+      </feComponentTransfer>
+    
+       <feComponentTransfer id="grainGamma-Secondary" result="grainGamma-Secondary">
+        <feFuncR  type="gamma" amplitude="1" exponent="1" offset="0.1"></feFuncR>
+        <feFuncG type="gamma" amplitude="1" exponent="1" offset="0.1"></feFuncG>
+        <feFuncB type="gamma" amplitude="1" exponent="1" offset="0.1"></feFuncB>
+       </feComponentTransfer>
+    
+      <feComponentTransfer id="colorize-Secondary" result="colorize-Secondary">
+        <feFuncr  type="discrete" tableValues="0 0.47"></feFuncr>
+        <feFuncG type="discrete" tableValues="0 1"></feFuncG>
+        <feFuncB type="discrete" tableValues="0 0"></feFuncB>
+      </feComponentTransfer>
+       
+      <feMerge result="grainOut-Secondary">
+        <feMergeNode in="blendedGrain-Secondary" ></feMergeNode>
+        <feMergeNode in="grainLinear-Secondary"></feMergeNode>
+        <feMergeNode in="grainGamma-Secondary"></feMergeNode>
+        <feMergeNode in="colorize-Secondary"></feMergeNode>
+      </feMerge>
+    
+    <!--  TertiaryChannel  -->
+    
+    <feTurbulence 
+      type='fractalNoise' 
+      baseFrequency='0.8' 
+      numOctaves='1'
+      seed="3"
+      result="baseGrain-Tertiary"
+      ></feTurbulence>
+    
+    <feBlend
+      in="baseGrain-Tertiary"
+      in2="SourceGraphic"
+      mode="color-dodge"
+      result="blendedGrain-Tertiary"
+     ></feBlend>
+    
+      <feComponentTransfer id="grainLinear-Tertiary" result="grainLinear-Tertiary">
+        <feFuncR  type="linear" slope="1" intercept="-0.2"></feFuncR>
+        <feFuncG type="linear" slope="1" intercept="-0.2"></feFuncG>
+        <feFuncB type="linear" slope="1" intercept="-0.2"></feFuncB>
+      </feComponentTransfer>
+    
+       <feComponentTransfer id="grainGamma-Tertiary" result="grainGamma-Tertiary">
+        <feFuncR  type="gamma" amplitude="1" exponent="1" offset="0.1"></feFuncR>
+        <feFuncG type="gamma" amplitude="1" exponent="1" offset="0.1"></feFuncG>
+        <feFuncB type="gamma" amplitude="1" exponent="1" offset="0.1"></feFuncB>
+       </feComponentTransfer>
+    
+      <feComponentTransfer id="colorize-Tertiary" result="colorize-Tertiary">
+        <feFuncr  type="discrete" tableValues="0 0.2"></feFuncr>
+        <feFuncG type="discrete" tableValues="0 0.2"></feFuncG>
+        <feFuncB type="discrete" tableValues="0 1"></feFuncB>
+      </feComponentTransfer>
+       
+      <feMerge result="grainOut-Tertiary">
+        <feMergeNode in="blendedGrain-Tertiary" ></feMergeNode>
+        <feMergeNode in="grainLinear-Tertiary"></feMergeNode>
+        <feMergeNode in="grainGamma-Tertiary"></feMergeNode>
+        <feMergeNode in="colorize-Tertiary"></feMergeNode>
+      </feMerge>
+    
+    
+    
+    
+    
+    <feBlend in="grainOut-Primary" in2="grainOut-Secondary" mode="screen" result="screen-1"><feBlend/>
+    <feBlend in="screen-1" in2="grainOut-Tertiary" mode="screen"><feBlend/>
+    
+
+</filter>
+        
+</svg>
