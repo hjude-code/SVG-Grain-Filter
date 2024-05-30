@@ -81,9 +81,8 @@ class GrainChannel {
         })
         input.addEventListener('input', (x)=>{
             slider.value = input.value;
-            toUpdate.setAttribute(attribute, input.value);
             toUpdate.forEach((elmnt)=>{
-                elmnt.setAttribute(attribute, slider.value);
+                elmnt.setAttribute(attribute, input.value);
             })
         })
 
@@ -299,12 +298,15 @@ class GrainChannel {
         this.colorizeFunction.appendChild(funcB);
     }
     updateColor(newHex){
-        let children = this.colorizeFunction.childNodes;
+
+        let colorFunc = document.querySelector(`#${this.channelName}-colorize`);
+        let channelFuncs = colorFunc.children
+
         const colors = this.parseColorTable(newHex);
 
-        children.forEach((child, index)=>{
-            child.setAttribute('tableValues', colors[index])
-        })
+        for(let i = 0; i<channelFuncs.length; i++){
+            channelFuncs[i].setAttribute('tableValues', `0 ${colors[i]}`);
+          }
     }
     colorControler(controlPannelElement){
         let grainControls = document.createElement('div');
@@ -418,6 +420,8 @@ class GrainChannel {
 
 }
 
+
+
 const controlPannel = document.createElement('div');
 controlPannel.id = 'grainControls';
 controlPannel.style.cssText = `
@@ -432,18 +436,30 @@ document.body.appendChild(controlPannel);
 
 
 
+let channelA = {
+    color:'#e41e26',
+}
+
+let channelB = {
+    color:'#78ff00',
+}
+
+let channelC = {
+    color:'#3232ff',
+}
+
 
 
 const channel_A = new GrainChannel(
     channelName='channel-A',
-    color='#e41e26',
+    color=channelA.color,
     noise = [1, 1],
     linear = [0.6, 0],
     gamma = [1.1, 1.1, 0]
 );
 const channel_B = new GrainChannel(
     channelName='channel-B',
-    color='#78ff00',
+    color=channelB.color,
     noise = [1, 1],
     linear = [0.7, 0.11],
     gamma = [1, 1, 0]
@@ -451,14 +467,11 @@ const channel_B = new GrainChannel(
 
 const channel_C = new GrainChannel(
     channelName='channel-C',
-    color='#3232ff',
+    color=channelC.color,
     noise = [1, 1],
     linear = [1.4, -0.16],
     gamma = [1.2, 0.73, 0]
 );
-
-
-
 
 
 channel_A.build(svgFilter);
@@ -468,12 +481,30 @@ channel_B.controls(controlPannel);
 channel_C.build(svgFilter);
 channel_C.controls(controlPannel);
 
+let gui = new dat.GUI()
+let primary = gui.addFolder("Primary Color")
+primary.addColor(channelA, "color").onChange(()=>{
+    channel_A.updateColor(channelA.color)
+})
+
+let secondary = gui.addFolder("Secondary Color")
+secondary.addColor(channelB, "color").onChange(()=>{
+    channel_B.updateColor(channelB.color)
+})
+
+let tertiary = gui.addFolder("Tertiary Color")
+tertiary.addColor(channelC, "color").onChange(()=>{
+    channel_C.updateColor(channelC.color)
+    // updateColorChannels("Tertiary", channelC.color)
+    // updateColorChannels("A", channelC.color)
+})
+
+
 const blend1 = document.createElementNS("http://www.w3.org/2000/svg", 'feBlend');
 blend1.setAttribute('in', 'channel-A-merge');
 blend1.setAttribute('in2', 'channel-B-merge');
 blend1.setAttribute('mode', 'screen');
 blend1.setAttribute('result', 'blend1');
-
 
 svgFilter.appendChild(blend1);
 

@@ -1,0 +1,33 @@
+@font-face {
+    font-family: "Flama-Str";
+    src: url(../Resources/FLAMA-STR-R-1.OTF) format("opentype");
+}
+
+*
+
+h1{
+    font-size: 3rem;
+    font-family: 'Flama';
+    text-transform: uppercase;
+}
+
+
+.grainBlock{
+    position: absolute;
+    inset: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: url("#GrainFilter");
+    background-color:#ffffff;
+}
+
+.grainText{
+    background-image:linear-gradient(-90deg, black 15%, white);
+    background-clip: text;
+    color: transparent;
+    font-family:'Flama-Str';
+    font-weight: 900;
+
+}
+
