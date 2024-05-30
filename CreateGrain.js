@@ -48,47 +48,6 @@ class GrainChannel {
         return tag
     }
 
-    createSlider(baseValue, minValue, maxValue, steps, toUpdate, attribute){
-        let sliderGroup = document.createElement('div');
-
-
-        let sliderLabel = document.createElement('label');
-        sliderLabel.innerHTML = `${this.channelName} ${attribute}`;
-        sliderGroup.appendChild(sliderLabel);
-
-        let slider = document.createElement('input');
-        slider.setAttribute('type', 'range');
-        slider.setAttribute('value', baseValue);
-        slider.setAttribute('min', minValue);
-        slider.setAttribute('max', maxValue);
-        slider.setAttribute('step', steps);
-        sliderGroup.appendChild(slider);
-
-        let input = document.createElement('input');
-        input.setAttribute('type', 'number');
-        input.setAttribute('value', baseValue);
-        input.setAttribute('min', minValue);
-        input.setAttribute('max', maxValue);
-        input.setAttribute('step', steps);
-        sliderGroup.appendChild(input);
-
-        
-        slider.addEventListener('input', (x)=>{
-            input.value = slider.value;
-            toUpdate.forEach((elmnt)=>{
-                elmnt.setAttribute(attribute, slider.value);
-            })
-        })
-        input.addEventListener('input', (x)=>{
-            slider.value = input.value;
-            toUpdate.forEach((elmnt)=>{
-                elmnt.setAttribute(attribute, input.value);
-            })
-        })
-
-        return sliderGroup
-    }
-
     createTurbulence(){
         this.basicNoiseFunction = this.createTag(
             'feTurbulence',
@@ -107,23 +66,6 @@ class GrainChannel {
         this.basicNoiseFunction.setAttribute('baseFrequency', baseFrequency);
         this.basicNoiseFunction.setAttribute('numOctaves', numOctaves);
 
-    }
-    turbulenceControler(controlPannelElement){
-        let grainControls = document.createElement('div');
-        let label = document.createElement('p');
-        label.innerHTML = `${this.channelName} grain controls`;
-        grainControls.appendChild(label)
-
-        let sliders = []
-        sliders.push(this.createSlider(this.noise[0],0,1,0.001,[this.basicNoiseFunction], 'baseFrequency'));
-        sliders.push(this.createSlider(this.noise[1],0,2,1,[this.basicNoiseFunction], 'numOctaves'));
-        
-
-        sliders.forEach((slider)=>{
-            grainControls.appendChild(slider);
-        })
-
-        controlPannelElement.appendChild(grainControls);
     }
 
     createBlend(){
@@ -170,25 +112,6 @@ class GrainChannel {
             child.setAttribute('intercept', intercept);
         })
     }
-    linearControler(controlPannelElement){
-        let grainControls = document.createElement('div');
-        let label = document.createElement('p');
-        label.innerHTML = `${this.channelName} linear controls`;
-        grainControls.appendChild(label)
-
-        let children = this.linearFunction.childNodes;
-
-        let sliders = []
-        sliders.push(this.createSlider(this.linear[0],-2,2,0.01,children, 'slope'));
-        sliders.push(this.createSlider(this.linear[1],-2,2,0.01,children, 'intercept'));
-        
-
-        sliders.forEach((slider)=>{
-            grainControls.appendChild(slider);
-        })
-
-        controlPannelElement.appendChild(grainControls);
-    }
 
     createGamma(){
         this.gammaFunction = this.createTag(
@@ -223,26 +146,6 @@ class GrainChannel {
             child.setAttribute('offset', offset);
         })
     }
-    gammaControler(controlPannelElement){
-        let grainControls = document.createElement('div');
-        let label = document.createElement('p');
-        label.innerHTML = `${this.channelName} gamma controls`;
-        grainControls.appendChild(label)
-
-        let children = this.gammaFunction.childNodes;
-
-        let sliders = []
-        sliders.push(this.createSlider(1,-2,2,0.001,children, 'amplitude'));
-        sliders.push(this.createSlider(1,-2,2,0.01,children, 'exponent'));
-        sliders.push(this.createSlider(1,-2,2,0.01,children, 'offset'));
-        
-
-        sliders.forEach((slider)=>{
-            grainControls.appendChild(slider);
-        })
-
-        controlPannelElement.appendChild(grainControls);
-    }
 
 
     parseColorTable(hex){
@@ -255,7 +158,6 @@ class GrainChannel {
 
         return [r,g,b];
     }
-
     colorize(){
         this.colorizeFunction = this.createTag(
             'feComponentTransfer',
@@ -307,29 +209,6 @@ class GrainChannel {
         for(let i = 0; i<channelFuncs.length; i++){
             channelFuncs[i].setAttribute('tableValues', `0 ${colors[i]}`);
           }
-    }
-    colorControler(controlPannelElement){
-        let grainControls = document.createElement('div');
-        let label = document.createElement('p');
-        label.innerHTML = `${this.channelName} color`;
-        grainControls.appendChild(label);
-
-        let children = this.colorizeFunction.childNodes;
-
-        let colorPicker = document.createElement('input');
-        colorPicker.setAttribute('type', 'color');
-        colorPicker.setAttribute('value',this.color);
-        colorPicker.addEventListener('input', ()=>{
-            this.updateColor(colorPicker.value);
-        })
-
-
-        grainControls.appendChild(colorPicker);
-
-
-        controlPannelElement.appendChild(grainControls);
-
-        
     }
 
     merge(){
@@ -403,21 +282,6 @@ class GrainChannel {
 
     };
 
-    controls(controlPannelElement){
-
-        const controlGroup = document.createElement('details');
-        const controlGroupSummary = document.createElement('summary');
-        controlGroupSummary.innerHTML = `${this.channelName} controls`;
-        controlGroup.appendChild(controlGroupSummary);
-        
-        this.turbulenceControler(controlGroup);
-        this.linearControler(controlGroup);
-        this.gammaControler(controlGroup);
-        this.colorControler(controlGroup);
-
-        controlPannelElement.appendChild(controlGroup);
-    }
-
 }
 
 
@@ -438,14 +302,25 @@ document.body.appendChild(controlPannel);
 
 let channelA = {
     color:'#e41e26',
+    linear:{slope:0.6, intercept:0},
+    gamma:{amplitude:1.1, exponent:1.1, offset:0}
 }
 
 let channelB = {
     color:'#78ff00',
+    linear:{slope:0.7, intercept:0.11},
+    gamma:{amplitude:1, exponent:1, offset:0}
 }
 
 let channelC = {
     color:'#3232ff',
+    linear:{slope:1.4, intercept:-0.16},
+    gamma:{amplitude:1.2, exponent:0.73, offset:0}
+}
+
+let grainVals = {
+    frequency:1,
+    octaves:1
 }
 
 
@@ -454,15 +329,15 @@ const channel_A = new GrainChannel(
     channelName='channel-A',
     color=channelA.color,
     noise = [1, 1],
-    linear = [0.6, 0],
-    gamma = [1.1, 1.1, 0]
+    linear = [channelA.linear.slope, channelA.linear.intercept],
+    gamma = [channelA.gamma.amplitude, channelA.gamma.exponent, channelA.gamma.offset]
 );
 const channel_B = new GrainChannel(
     channelName='channel-B',
     color=channelB.color,
     noise = [1, 1],
-    linear = [0.7, 0.11],
-    gamma = [1, 1, 0]
+    linear = [channelB.linear.slope, channelB.linear.intercept],
+    gamma = [channelB.gamma.amplitude, channelB.gamma.exponent, channelB.gamma.offset]
 );
 
 const channel_C = new GrainChannel(
@@ -470,34 +345,102 @@ const channel_C = new GrainChannel(
     color=channelC.color,
     noise = [1, 1],
     linear = [1.4, -0.16],
-    gamma = [1.2, 0.73, 0]
+    gamma = [channelC.gamma.amplitude, channelC.gamma.exponent, channelC.gamma.offset]
 );
 
 
 channel_A.build(svgFilter);
-channel_A.controls(controlPannel);
+// channel_A.controls(controlPannel);
 channel_B.build(svgFilter);
-channel_B.controls(controlPannel);
+// channel_B.controls(controlPannel);
 channel_C.build(svgFilter);
-channel_C.controls(controlPannel);
+// channel_C.controls(controlPannel);
+
+
 
 let gui = new dat.GUI()
 let primary = gui.addFolder("Primary Color")
 primary.addColor(channelA, "color").onChange(()=>{
     channel_A.updateColor(channelA.color)
 })
+let linearPrimary = primary.addFolder("linear");
+linearPrimary.add(channelA.linear, "slope", 0, 3).onChange(()=>{
+    channel_A.updateLinear(channelA.linear.slope, channelA.linear.intercept)
+})
+linearPrimary.add(channelA.linear, "intercept", -1, 1).onChange(()=>{
+    channel_A.updateLinear(channelA.linear.slope, channelA.linear.intercept)
+})
+let gammaPrimary = primary.addFolder("gamma");
+gammaPrimary.add(channelA.gamma, "amplitude", 0.5, 4).onChange(()=>{
+    channel_A.updateGamma(channelA.gamma.amplitude, channelA.gamma.exponent, channelA.gamma.offset)
+})
+gammaPrimary.add(channelA.gamma, "exponent", 0.5, 4).onChange(()=>{
+    channel_A.updateGamma(channelA.gamma.amplitude, channelA.gamma.exponent, channelA.gamma.offset)
+})
+gammaPrimary.add(channelA.gamma, "offset", 0.5, 4).onChange(()=>{
+    channel_A.updateGamma(channelA.gamma.amplitude, channelA.gamma.exponent, channelA.gamma.offset)
+})
+
 
 let secondary = gui.addFolder("Secondary Color")
 secondary.addColor(channelB, "color").onChange(()=>{
     channel_B.updateColor(channelB.color)
 })
+let linearSecondary = secondary.addFolder("linear");
+linearSecondary.add(channelB.linear, "slope", 0, 3).onChange(()=>{
+    channel_B.updateLinear(channelB.linear.slope, channelB.linear.intercept)
+})
+linearSecondary.add(channelB.linear, "intercept", -1, 1).onChange(()=>{
+    channel_B.updateLinear(channelB.linear.slope, channelB.linear.intercept)
+})
+let gammaSecondary = secondary.addFolder("gamma");
+gammaSecondary.add(channelB.gamma, "amplitude", 0.5, 4).onChange(()=>{
+    channel_B.updateGamma(channelB.gamma.amplitude, channelB.gamma.exponent, channelB.gamma.offset)
+})
+gammaSecondary.add(channelB.gamma, "exponent", 0.5, 4).onChange(()=>{
+    channel_B.updateGamma(channelB.gamma.amplitude, channelB.gamma.exponent, channelB.gamma.offset)
+})
+gammaSecondary.add(channelB.gamma, "offset", -1, 1).onChange(()=>{
+    channel_B.updateGamma(channelB.gamma.amplitude, channelB.gamma.exponent, channelB.gamma.offset)
+})
+
 
 let tertiary = gui.addFolder("Tertiary Color")
 tertiary.addColor(channelC, "color").onChange(()=>{
     channel_C.updateColor(channelC.color)
-    // updateColorChannels("Tertiary", channelC.color)
-    // updateColorChannels("A", channelC.color)
 })
+let linearTertiary = tertiary.addFolder("linear")
+linearTertiary.add(channelC.linear, "slope", 0, 3).onChange(()=>{
+    channel_C.updateLinear(channelC.linear.slope, channelC.linear.intercept)
+})
+linearTertiary.add(channelC.linear, "intercept", -1, 1).onChange(()=>{
+    channel_C.updateLinear(channelC.linear.slope, channelC.linear.intercept)
+})
+let gammaTertiary = tertiary.addFolder("gamma")
+gammaTertiary.add(channelC.gamma, "amplitude", 0.5, 4).onChange(()=>{
+    channel_C.updateGamma(channelC.gamma.amplitude, channelC.gamma.exponent, channelC.gamma.offset)
+})
+gammaTertiary.add(channelC.gamma, "exponent", 0.5, 4).onChange(()=>{
+    channel_C.updateGamma(channelC.gamma.amplitude, channelC.gamma.exponent, channelC.gamma.offset)
+})
+gammaTertiary.add(channelC.gamma, "offset", -1, 1).onChange(()=>{
+    channel_C.updateGamma(channelC.gamma.amplitude, channelC.gamma.exponent, channelC.gamma.offset)
+})
+
+let grain = gui.addFolder("Grain Control")
+grain.add(grainVals, "frequency", 0,1).onChange(()=>{
+    channel_A.updateTurbulence(grainVals.frequency, grainVals.octaves)
+    channel_B.updateTurbulence(grainVals.frequency, grainVals.octaves)
+    channel_C.updateTurbulence(grainVals.frequency, grainVals.octaves)
+})
+grain.add(grainVals, "octaves", 0,1).onChange(()=>{
+    channel_A.updateTurbulence(grainVals.frequency, grainVals.octaves)
+    channel_B.updateTurbulence(grainVals.frequency, grainVals.octaves)
+    channel_C.updateTurbulence(grainVals.frequency, grainVals.octaves)
+})
+
+
+
 
 
 const blend1 = document.createElementNS("http://www.w3.org/2000/svg", 'feBlend');
